@@ -2,8 +2,10 @@ package menu
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/fanama/go-utils/fichier"
+	"github.com/fanama/go-utils/mail"
 )
 
 func Display() {
@@ -13,6 +15,7 @@ func Display() {
 		fmt.Println("###Choose an action :")
 		fmt.Println("- Create a json file: 1")
 		fmt.Println("- Read a json file : 2")
+		fmt.Println("- Send an Email : 3")
 		fmt.Println("- Exit : 0")
 		fmt.Print("Choice : ")
 		fmt.Scan(&choice)
@@ -31,6 +34,13 @@ func Display() {
 			fmt.Scan(&fileName)
 			res, _ := fichier.ReadJSON(fileName)
 			fmt.Println("resultat : ", res)
+		case 3:
+			m := mail.Configuration{}
+			err := m.Run()
+			if err != nil {
+				log.Fatal(err)
+			}
+
 		default:
 			fmt.Println("command does'nt exist...")
 			choice = -1
