@@ -14,12 +14,6 @@ type Configuration struct {
 	Destination string `json:"destination"`
 }
 
-type Mail interface {
-	Init() (err error)
-	SendMail(message string)
-	Run() (err error)
-}
-
 func (conf *Configuration) Init() (err error) {
 	*conf, err = ReadConfig("mail")
 	return err
