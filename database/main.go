@@ -8,12 +8,8 @@ func (m *Manager) Run() (err error) {
 
 	choice := -1
 
-	var db string
+	var file string
 	for choice != 0 {
-		if db == "" {
-			fmt.Print("> Enter the name of the database : ")
-			fmt.Scan(&db)
-		}
 		fmt.Println(">>>Choose a database<<<")
 		fmt.Println(">1:sqlite3")
 		fmt.Println(">2:mysl")
@@ -30,7 +26,13 @@ func (m *Manager) Run() (err error) {
 		case 0:
 			fmt.Println("Exit....")
 		case 1:
-			err = m.InitSqliteDB(db)
+			if file == "" {
+				fmt.Print("> Enter the name of the config file : ")
+				fmt.Scan(&file)
+				choice = -1
+			}
+
+			err = m.InitSqliteDB(file)
 			if err != nil {
 				choice = -1
 				fmt.Println("> erreur : ", err)
@@ -41,7 +43,7 @@ func (m *Manager) Run() (err error) {
 				choice = -1
 				fmt.Println("> erreur : ", err)
 			}
-			m.Exec()
+			err = m.Exec()
 			if err != nil {
 				fmt.Println("> erreur : ", err)
 				choice = -1
@@ -96,11 +98,23 @@ func (m Manager) Exec() (err error) {
 		case 0:
 			fmt.Println("Exit....")
 		case 1:
-			err = m.CreateTable()
+
+			err = m.CreateTable(User{})
 			if err != nil {
 				choice = -1
 				fmt.Println("> erreur : ", err)
 			}
+			var user User
+			fmt.Println("Username : ")
+			fmt.Scan(&user.Name)
+			fmt.Println("Password : ")
+			fmt.Scan(&user.Password)
+			err = m.CreateUser(user)
+			if err != nil {
+				choice = -1
+				fmt.Println("> erreur : ", err)
+			}
+
 		case 2:
 			err = m.ShowTables()
 			if err != nil {

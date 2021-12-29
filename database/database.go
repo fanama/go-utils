@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"strings"
 )
 
 func (m *Manager) TestDB() (err error) {
@@ -20,55 +19,33 @@ func (m *Manager) TestDB() (err error) {
 	return err
 }
 
-func (m Manager) CreateTable() (err error) {
-
-	// ask for table name and column names and types
-	// ask for number of columns
-	// ask for primary key
-
+func (m *Manager) CreateTable(typeObject interface{}) (err error) {
 	fmt.Println("Creating table------------------------------------------------------")
-	fmt.Println("Enter table name")
-	var tmp string
-	fmt.Scan(&tmp)
-	var tableName string
-	fmt.Scanln(&tableName)
-	fmt.Println("Enter number of columns")
-	var numCols int
-	fmt.Scanln(&numCols)
-	fmt.Println("Enter primary key")
-	var primaryKey string
-	fmt.Scanln(&primaryKey)
-	fmt.Println("Enter column names and types")
-	var cols []string
-	for i := 0; i < numCols; i++ {
-		fmt.Println(i, ": Enter column name")
-		var colName string
-		fmt.Scanln(&colName)
-		fmt.Println(i, ": Enter column type")
-		var colType string
-		fmt.Scanln(&colType)
-		cols = append(cols, colName+" "+colType)
-	}
+	err = m.db.AutoMigrate(typeObject)
 
-	// create table
-	// create a list of column names and types
-
-	request := "CREATE TABLE " + tableName + " (" + primaryKey + " INTEGER PRIMARY KEY AUTOINCREMENT, " + strings.Join(cols, ",") + ")"
-
-	fmt.Println(request)
-
-	// err = m.db.Raw(request).Error
+	return err
+}
+func (m *Manager) CreateUser(user User) (err error) {
+	fmt.Println("creating element----------------------------")
+	err = m.db.Create(&user).Error
 
 	return err
 }
 
 func (m Manager) ShowTables() (err error) {
-	fmt.Println("Showing tables------------------------------------------------------")
+	// gorm show config database in terminal
+	fmt.Println("show tables------------------------------------------------------")
 	var tables []string
-	err = m.db.Table("sqlite_master").Select("name").Where("type = ?", "table").Pluck("name", &tables).Error
+	err = m.db.Raw("SHOW TABLES").Scan(&tables).Error
+	fmt.Println("tables : ", tables)
+
 	if err != nil {
-		return err
+		err = m.db.Table("sqlite_schema").Select("name").Scan(&tables).Error
 	}
-	fmt.Println(tables)
+
+	if err != nil {
+		fmt.Println("error : ", err)
+	}
+
 	return err
 }
