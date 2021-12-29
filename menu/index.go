@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/fanama/go-utils/database"
 	"github.com/fanama/go-utils/fichier"
 	"github.com/fanama/go-utils/mail"
 )
@@ -16,6 +17,7 @@ func Display() {
 		fmt.Println("- Create a json file: 1")
 		fmt.Println("- Read a json file : 2")
 		fmt.Println("- Send an Email : 3")
+		fmt.Println("- Database : 4")
 		fmt.Println("- Exit : 0")
 		fmt.Print("Choice : ")
 		fmt.Scan(&choice)
@@ -37,6 +39,12 @@ func Display() {
 		case 3:
 			m := mail.Configuration{}
 			err := m.Run()
+			if err != nil {
+				log.Fatal(err)
+			}
+		case 4:
+			d := database.Manager{}
+			err := d.Run()
 			if err != nil {
 				log.Fatal(err)
 			}
